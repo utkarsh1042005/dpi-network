@@ -1,0 +1,94 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+.env
+.venv
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ML Models & Artifacts
+Packet_analyzer/models/*.pkl
+Packet_analyzer/models/*.joblib
+Packet_analyzer/models/*.h5
+Packet_analyzer/models/*.hdf5
+Packet_analyzer/models/*.model
+Packet_analyzer/models/*.bin
+Packet_analyzer/models/*.pt
+Packet_analyzer/models/*.pth
+Packet_analyzer/models/*.onnx
+Packet_analyzer/models/*.pb
+Packet_analyzer/models/saved_model/
+
+# Datasets (large files - use Git LFS if needed)
+Packet_analyzer/datasets/**/*.csv
+Packet_analyzer/datasets/**/*.parquet
+Packet_analyzer/datasets/**/*.pcap
+Packet_analyzer/datasets/**/*.json
+
+# Test PCAP files (binary, large)
+Packet_analyzer/test_dpi.pcap
+Packet_analyzer/test_files/*.pcap
+
+# Evaluation outputs (regenerated)
+Packet_analyzer/evaluation/*.png
+Packet_analyzer/evaluation/*.json
+Packet_analyzer/evaluation/*.csv
+
+# Logs
+*.log
+logs/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Documentation build
+docs/_build/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+nul
+
+# Docker
+.dockerignore
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Byte-compiled
+*.pyc
+*.pyo
