@@ -117,6 +117,172 @@ def validate_features(feature_dict: Dict) -> Optional[str]:
     return None
 
 
+@app.route('/', methods=['GET'])
+def home():
+    """Root route — Project info and API endpoints."""
+    uptime = time.time() - _api_stats['uptime']
+    metadata = _model_data.get('metadata', {}) if _model_data else {}
+    feature_names = get_active_features()
+
+    model_type = metadata.get('model_type', 'N/A')
+    dataset = metadata.get('dataset', 'N/A')
+    accuracy = metadata.get('accuracy')
+    f1 = metadata.get('f1_macro')
+
+    html = f'''
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>DPI Network - Deep Packet Inspection Engine</title>
+        <style>
+            * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+            body {{ font-family: 'Segoe UI', Tahoma, sans-serif; background: #0f0f23; color: #e0e0e0; line-height: 1.6; }}
+            .container {{ max-width: 900px; margin: 0 auto; padding: 40px 20px; }}
+            h1 {{ color: #00d4ff; font-size: 2.2em; margin-bottom: 8px; }}
+            h2 {{ color: #00d4ff; font-size: 1.3em; margin: 30px 0 15px; border-bottom: 1px solid #333; padding-bottom: 8px; }}
+            .subtitle {{ color: #888; font-size: 1.1em; margin-bottom: 30px; }}
+            .badge {{ display: inline-block; background: #1a3a5c; color: #00d4ff; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; margin-right: 8px; margin-bottom: 6px; }}
+            .badge.green {{ background: #1a3c1a; color: #4caf50; }}
+            .badge.orange {{ background: #3c2a1a; color: #ff9800; }}
+            .grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }}
+            .card {{ background: #1a1a2e; padding: 20px; border-radius: 10px; border: 1px solid #333; }}
+            .card-value {{ font-size: 1.8em; color: #00d4ff; font-weight: bold; }}
+            .card-label {{ color: #888; font-size: 0.85em; text-transform: uppercase; letter-spacing: 1px; }}
+            .endpoint {{ background: #1a1a2e; padding: 15px 20px; margin: 10px 0; border-radius: 8px; border-left: 3px solid #00d4ff; }}
+            .endpoint .method {{ color: #4caf50; font-weight: bold; font-family: monospace; }}
+            .endpoint .path {{ color: #fff; font-family: monospace; font-size: 1.05em; }}
+            .endpoint .desc {{ color: #888; margin-top: 4px; font-size: 0.9em; }}
+            .features {{ display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0; }}
+            .feature {{ background: #16213e; padding: 10px 16px; border-radius: 6px; font-size: 0.9em; }}
+            .feature .icon {{ color: #00d4ff; margin-right: 6px; }}
+            code {{ background: #16213e; padding: 2px 8px; border-radius: 4px; font-family: monospace; color: #ff9800; }}
+            .footer {{ margin-top: 40px; padding-top: 20px; border-top: 1px solid #333; color: #555; font-size: 0.85em; text-align: center; }}
+            .btn {{ display: inline-block; background: #00d4ff; color: #000; padding: 10px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; margin: 5px; transition: background 0.2s; }}
+            .btn:hover {{ background: #00b8d9; }}
+            .btn.outline {{ background: transparent; border: 2px solid #00d4ff; color: #00d4ff; }}
+            .btn.outline:hover {{ background: #00d4ff20; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>DPI Network</h1>
+            <p class="subtitle">Deep Packet Inspection Engine with ML-powered Intrusion Detection</p>
+
+            <div>
+                <span class="badge green">Online</span>
+                <span class="badge">CIC-IDS2017</span>
+                <span class="badge">{model_type}</span>
+                <span class="badge orange">Python 3.11</span>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <div class="card-value">{int(uptime)}s</div>
+                    <div class="card-label">Uptime</div>
+                </div>
+                <div class="card">
+                    <div class="card-value">{len(feature_names)}</div>
+                    <div class="card-label">Features</div>
+                </div>
+                <div class="card">
+                    <div class="card-value">{metadata.get("class_count", 8)}</div>
+                    <div class="card-label">Attack Classes</div>
+                </div>
+                <div class="card">
+                    <div class="card-value">{f"{accuracy:.1%}" if accuracy else "N/A"}</div>
+                    <div class="card-label">Accuracy</div>
+                </div>
+            </div>
+
+            <h2>Features</h2>
+            <div class="features">
+                <div class="feature"><span class="icon">&#128269;</span> Packet Parsing (ETH/IP/TCP/UDP)</div>
+                <div class="feature"><span class="icon">&#128279;</span> Flow Tracking (5-Tuple)</div>
+                <div class="feature"><span class="icon">&#128274;</span> TLS SNI Extraction</div>
+                <div class="feature"><span class="icon">&#128241;</span> App Classification</div>
+                <div class="feature"><span class="icon">&#128737;</span> Rule-Based Blocking</div>
+                <div class="feature"><span class="icon">&#129302;</span> ML Intrusion Detection</div>
+                <div class="feature"><span class="icon">&#128196;</span> PCAP Analysis</div>
+                <div class="feature"><span class="icon">&#128202;</span> Real-Time Dashboard</div>
+            </div>
+
+            <h2>API Endpoints</h2>
+
+            <div class="endpoint">
+                <span class="method">GET</span> <span class="path">/</span>
+                <div class="desc">This page — Project info and documentation</div>
+            </div>
+            <div class="endpoint">
+                <span class="method">GET</span> <span class="path">/health</span>
+                <div class="desc">Health check with model status and uptime</div>
+            </div>
+            <div class="endpoint">
+                <span class="method">GET</span> <span class="path">/features</span>
+                <div class="desc">List all features the ML model expects</div>
+            </div>
+            <div class="endpoint">
+                <span class="method">GET</span> <span class="path">/stats</span>
+                <div class="desc">API usage statistics (requests, predictions)</div>
+            </div>
+            <div class="endpoint">
+                <span class="method">GET</span> <span class="path">/dashboard</span>
+                <div class="desc">Interactive web dashboard for PCAP analysis</div>
+            </div>
+            <div class="endpoint">
+                <span class="method">POST</span> <span class="path">/predict</span>
+                <div class="desc">Predict traffic label from JSON flow features</div>
+            </div>
+            <div class="endpoint">
+                <span class="method">POST</span> <span class="path">/predict_pcap</span>
+                <div class="desc">Analyze uploaded PCAP file (returns JSON)</div>
+            </div>
+            <div class="endpoint">
+                <span class="method">POST</span> <span class="path">/summarize_pcap</span>
+                <div class="desc">Upload PCAP for plain-English traffic summary</div>
+            </div>
+
+            <h2>Quick Start</h2>
+            <div class="card" style="margin: 15px 0;">
+                <p style="margin-bottom: 10px;"><strong>Check health:</strong></p>
+                <code>curl https://dpi-network.onrender.com/health</code>
+                <p style="margin: 15px 0 10px;"><strong>Predict from features:</strong></p>
+                <code>curl -X POST https://dpi-network.onrender.com/predict -H "Content-Type: application/json" -d '&#123;"flow_duration": 12345&#125;'</code>
+                <p style="margin: 15px 0 10px;"><strong>Analyze PCAP:</strong></p>
+                <code>curl -F "file=@capture.pcap" https://dpi-network.onrender.com/summarize_pcap</code>
+            </div>
+
+            <h2>Tech Stack</h2>
+            <div class="grid">
+                <div class="card">
+                    <div class="card-label">Backend</div>
+                    <p>Python 3.11, Flask, scikit-learn, XGBoost</p>
+                </div>
+                <div class="card">
+                    <div class="card-label">ML Model</div>
+                    <p>Random Forest on CIC-IDS2017 dataset</p>
+                </div>
+                <div class="card">
+                    <div class="card-label">Dataset</div>
+                    <p>CIC-IDS2017 (8 attack categories)</p>
+                </div>
+            </div>
+
+            <div class="footer">
+                <p>DPI Network &mdash; Deep Packet Inspection Engine</p>
+                <p style="margin-top: 5px;">
+                    <a href="/dashboard" class="btn">Open Dashboard</a>
+                    <a href="/health" class="btn outline">Health Check</a>
+                </p>
+            </div>
+        </div>
+    </body>
+    </html>
+    '''
+    return render_template_string(html)
+
+
 @app.route('/health', methods=['GET'])
 def health():
     """Health check endpoint — shows model info and uptime."""
