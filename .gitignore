@@ -36,7 +36,6 @@ ENV/
 *~
 
 # ML Models & Artifacts
-Packet_analyzer/models/*.pkl
 Packet_analyzer/models/*.joblib
 Packet_analyzer/models/*.h5
 Packet_analyzer/models/*.hdf5
