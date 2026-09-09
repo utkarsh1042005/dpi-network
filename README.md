@@ -2,6 +2,10 @@
 
 A comprehensive network traffic analyzer that combines traditional DPI with machine learning for intrusion detection and traffic classification.
 
+## Live Demo
+
+**Deployed on Render:** [https://dpi-network.onrender.com](https://dpi-network.onrender.com)
+
 ## Features
 
 - **Packet Parsing**: Ethernet, IPv4, TCP, UDP, ICMP protocol dissection
@@ -64,9 +68,14 @@ python api_server.py --model cic_rf_model.pkl
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
+| `/` | GET | Project info and documentation |
+| `/health` | GET | Health check with model status |
+| `/features` | GET | List ML model features |
+| `/stats` | GET | API usage statistics |
+| `/dashboard` | GET | Interactive web dashboard |
 | `/predict` | POST | Classify network flow from JSON features |
-| `/predict_pcap` | POST | Classify flows from PCAP file upload |
-| `/health` | GET | Health check |
+| `/predict_pcap` | POST | Analyze uploaded PCAP file (JSON response) |
+| `/summarize_pcap` | POST | Upload PCAP for plain-English summary |
 
 ## Requirements
 
